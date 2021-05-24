@@ -25,6 +25,16 @@ async def get_notes(request):
     return web.json_response(notes)
 
 
+@router.get('/notes/{note_id}')
+async def get_note(request):
+    note_id = request.match_info['note_id']
+    try:
+        note = Note.get(id=note_id)
+    except Note.DoesNotExist:
+        return web.HTTPNotFound()
+    return web.json_response({'id': note.id, 'text': note.text})
+
+
 app = web.Application()
 app.add_routes(routes=router)
 web.run_app(app, host='localhost')

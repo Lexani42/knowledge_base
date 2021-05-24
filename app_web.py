@@ -106,6 +106,13 @@ async def update_note(request):
     return web.HTTPOk(text='note updated')
 
 
+@router.delete('/notes/{note_id}')
+async def delete_note(request):
+    note_id = request.match_info['note_id']
+    Note.delete().where(Note.id == note_id).execute()
+    return web.HTTPOk(text='note deleted')
+
+
 app = web.Application()
 app.add_routes(routes=router)
 web.run_app(app, host='localhost')

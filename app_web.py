@@ -1,8 +1,11 @@
 from aiohttp import web
 from models import *
+from json.decoder import JSONDecodeError
 
 router = web.RouteTableDef()
 
+
+# USERS #
 
 @router.get('/users')
 async def get_users(request):
@@ -25,23 +28,16 @@ async def get_notes(request):
     return web.json_response(notes)
 
 
-@router.get('/notes/{note_id}')
-async def get_note(request):
-    note_id = request.match_info['note_id']
-    try:
-        note = Note.get(id=note_id)
-    except Note.DoesNotExist:
-        return web.HTTPNotFound(text='note not found')
-    return web.json_response({'id': note.id, 'text': note.text})
-
-
 @router.post('/users/')
 async def create_user(request):
-    data = await request.json()
+    try:
+        data = await request.json()
+    except JSONDecodeError:
+        return web.HTTPBadRequest(text='bad data sent')
     try:
         uname = data['username']
     except KeyError:
-        return web.HTTPBadRequest()
+        return web.HTTPBadRequest(text='no username in body')
     try:
         User.create(name=uname)
         return web.HTTPOk(text='user created')
@@ -54,6 +50,40 @@ async def delete_user(request):
     user_id = request.match_info['user_id']
     User.delete().where(User.id == user_id).execute()
     return web.HTTPOk(text='user deleted')
+
+# NOTES #
+
+
+@router.get('/notes/{note_id}')
+async def get_note(request):
+    note_id = request.match_info['note_id']
+    try:
+        note = Note.get(id=note_id)
+    except Note.DoesNotExist:
+        return web.HTTPNotFound(text='note not found')
+    return web.json_response({'id': note.id, 'text': note.text})
+
+
+@router.post('/notes/')
+async def create_note(request):
+    try:
+        data = await request.json()
+    except JSONDecodeError:
+        return web.HTTPBadRequest(text='bad data sent')
+    try:
+        uid = data['user_id']
+    except KeyError:
+        return web.HTTPBadRequest(text='no user id in data')
+    try:
+        text = data['text']
+    except KeyError:
+        return web.HTTPBadRequest(text='no note text in data')
+    try:
+        user = User.get(id=uid)
+    except User.DoesNotExist:
+        return web.HTTPBadRequest(text='this user does not exist')
+    Note.create(user=user, text=text)
+    return web.HTTPOk(text='note created')
 
 
 app = web.Application()

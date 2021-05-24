@@ -4,12 +4,25 @@ from models import *
 router = web.RouteTableDef()
 
 
-@router.get('/users/')
+@router.get('/users')
 async def get_users(request):
     users = {}
     for user in User.select():
         users[user.id] = user.name
     return web.json_response(users)
+
+
+@router.get('/users/{user_id}')
+async def get_notes(request):
+    user_id = request.match_info['user_id']
+    try:
+        user = User.get(id=user_id)
+    except User.DoesNotExist:
+        return web.HTTPNotFound()
+    notes = {}
+    for note in user.notes:
+        notes[note.id] = note.text
+    return web.json_response(notes)
 
 
 app = web.Application()

@@ -15,6 +15,15 @@ async def get_users(request):
     return web.json_response(users)
 
 
+@router.get('/users/search/{name}')
+async def search_users(request):
+    users = {}
+    name = request.match_info['name']
+    for user in User.select().where(User.name.contains(name)):
+        users[user.id] = user.name
+    return web.json_response(users)
+
+
 @router.get('/users/{user_id}')
 async def get_notes(request):
     user_id = request.match_info['user_id']

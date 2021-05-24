@@ -86,6 +86,26 @@ async def create_note(request):
     return web.HTTPOk(text='note created')
 
 
+@router.put('/notes/{note_id}')
+async def update_note(request):
+    try:
+        data = await request.json()
+    except JSONDecodeError:
+        return web.HTTPBadRequest(text='bad data sent')
+    try:
+        text = data['text']
+    except KeyError:
+        return web.HTTPBadRequest(text='no note text in data')
+    try:
+        note_id = request.match_info['note_id']
+        note = Note.get(id=note_id)
+    except Note.DoesNotExist:
+        return web.HTTPBadRequest(text='this note does not exist')
+    note.text = text
+    note.save()
+    return web.HTTPOk(text='note updated')
+
+
 app = web.Application()
 app.add_routes(routes=router)
 web.run_app(app, host='localhost')

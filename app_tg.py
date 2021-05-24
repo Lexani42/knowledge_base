@@ -37,9 +37,7 @@ async def check(message: Message):
     try:
         uname = message.text.split()[1].split('@')[-1]
         u = User.get(name=uname)
-        counter = 0
-        for _ in u.notes:
-            counter += 1
+        counter = Note.select(fn.COUNT(Note.id)).where(Note.user == u).get()
         await bot.send_message(
             chat_id=message.chat.id,
             text=f'user {uname} have {counter} notes in db'

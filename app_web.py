@@ -35,6 +35,20 @@ async def get_note(request):
     return web.json_response({'id': note.id, 'text': note.text})
 
 
+@router.post('/users/')
+async def create_user(request):
+    data = await request.json()
+    try:
+        uname = data['username']
+    except KeyError:
+        return web.HTTPBadRequest()
+    try:
+        User.create(name=uname)
+        return web.HTTPOk()
+    except IntegrityError:
+        return web.HTTPBadRequest(text='user is already exists')
+
+
 app = web.Application()
 app.add_routes(routes=router)
 web.run_app(app, host='localhost')

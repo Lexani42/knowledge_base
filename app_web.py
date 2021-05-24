@@ -18,7 +18,7 @@ async def get_notes(request):
     try:
         user = User.get(id=user_id)
     except User.DoesNotExist:
-        return web.HTTPNotFound()
+        return web.HTTPNotFound(text='user not found')
     notes = {}
     for note in user.notes:
         notes[note.id] = note.text
@@ -31,7 +31,7 @@ async def get_note(request):
     try:
         note = Note.get(id=note_id)
     except Note.DoesNotExist:
-        return web.HTTPNotFound()
+        return web.HTTPNotFound(text='note not found')
     return web.json_response({'id': note.id, 'text': note.text})
 
 
@@ -44,9 +44,16 @@ async def create_user(request):
         return web.HTTPBadRequest()
     try:
         User.create(name=uname)
-        return web.HTTPOk()
+        return web.HTTPOk(text='user created')
     except IntegrityError:
         return web.HTTPBadRequest(text='user is already exists')
+
+
+@router.delete('/users/{user_id}')
+async def delete_user(request):
+    user_id = request.match_info['user_id']
+    User.delete().where(User.id == user_id).execute()
+    return web.HTTPOk(text='user deleted')
 
 
 app = web.Application()

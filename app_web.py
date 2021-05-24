@@ -37,6 +37,20 @@ async def get_notes(request):
     return web.json_response(notes)
 
 
+@router.get('/users/{user_id}/search/{word}')
+async def search_notes(request):
+    user_id = request.match_info['user_id']
+    word = request.match_info['word']
+    try:
+        user = User.get(id=user_id)
+    except User.DoesNotExist:
+        return web.HTTPBadRequest(text='user not found')
+    notes = {}
+    for note in Note.select().where((Note.user == user) & (Note.text.contains(word))):
+        notes[note.id] = note.text
+    return web.json_response(notes)
+
+
 @router.post('/users/')
 async def create_user(request):
     try:

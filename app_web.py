@@ -97,11 +97,11 @@ async def create_note(request):
     try:
         uid = data['user_id']
     except KeyError:
-        return web.HTTPBadRequest(text='no user id in data')
+        return web.HTTPBadRequest(text='no user id in body')
     try:
         text = data['text']
     except KeyError:
-        return web.HTTPBadRequest(text='no note text in data')
+        return web.HTTPBadRequest(text='no note text in body')
     try:
         user = User.get(id=uid)
     except User.DoesNotExist:
@@ -119,7 +119,7 @@ async def update_note(request):
     try:
         text = data['text']
     except KeyError:
-        return web.HTTPBadRequest(text='no note text in data')
+        return web.HTTPBadRequest(text='no note text in body')
     try:
         note_id = request.match_info['note_id']
         note = Note.get(id=note_id)

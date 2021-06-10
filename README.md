@@ -54,6 +54,8 @@ response:
 }
 ```
 
+`404 user not found` - user does not exist
+
 ### GET `/users/{user_id}/search/{word}`
 
 search in user notes by word
@@ -66,6 +68,8 @@ response:
   note_id3: text3
 }
 ```
+
+`404 user not found` - user does not exist
 
 ### POST `/users/`
 
@@ -106,6 +110,8 @@ response:
   "text": note text
 }
 ```
+
+`404 not not found` - note does not exist
 
 ### POST `/notes/`
 
@@ -150,7 +156,7 @@ response:
 
 `400 no note text in body` - no note text in request body
 
-`400 this note does not exist` - note with selected id does not exist
+`404 note not found` - note with selected id does not exist
 
 ### DELETE `/notes/{note_id}`
 

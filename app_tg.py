@@ -1,8 +1,9 @@
 from aiogram import Bot, Dispatcher, executor
 from aiogram.types import Message
 from models import *
+from settings import token
 
-bot = Bot(token='1812514445:AAGjfusZZZNtk_icteyixz25BKmxF9CQhrM')
+bot = Bot(token=token)
 dp = Dispatcher(bot=bot)
 
 

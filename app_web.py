@@ -1,6 +1,7 @@
 from aiohttp import web
 from models import *
 from json.decoder import JSONDecodeError
+import settings
 
 router = web.RouteTableDef()
 
@@ -136,6 +137,11 @@ async def delete_note(request):
     return web.HTTPOk(text='note deleted')
 
 
+try:
+    host, port = settings.host, settings.port
+except AttributeError:
+    host, port = 'localhost', 8080
+
 app = web.Application()
 app.add_routes(routes=router)
-web.run_app(app, host='localhost')
+web.run_app(app, host=host, port=port)

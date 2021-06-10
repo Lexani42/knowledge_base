@@ -45,7 +45,7 @@ async def search_notes(request):
     try:
         user = User.get(id=user_id)
     except User.DoesNotExist:
-        return web.HTTPBadRequest(text='user not found')
+        return web.HTTPNotFound(text='user not found')
     notes = {}
     for note in Note.select().where((Note.user == user) & (Note.text.contains(word))):
         notes[note.id] = note.text
@@ -124,7 +124,7 @@ async def update_note(request):
         note_id = request.match_info['note_id']
         note = Note.get(id=note_id)
     except Note.DoesNotExist:
-        return web.HTTPBadRequest(text='this note does not exist')
+        return web.HTTPNotFound(text='not not found')
     note.text = text
     note.save()
     return web.HTTPOk(text='note updated')

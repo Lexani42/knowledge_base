@@ -1,6 +1,6 @@
 # knowledge_base
 
-this is a knowledge base with integrated telegram interface and web API. create for personal needs, so there isn't account management
+this is backend for knowledge base with integrated telegram interface and web API. create for personal needs, so there isn't account management
 
 ## getting started
 1. install all the requirements
